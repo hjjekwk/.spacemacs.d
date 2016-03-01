@@ -36,7 +36,7 @@ values."
      ;; spell-checking
      ;; syntax-checking
      ;; version-control
-     web-mode
+     html
      scala
      javascript
      my-osx
@@ -105,7 +105,7 @@ values."
    ;; `dotspacemacs-startup-lists' doesn't include `recents'. (default 5)
    dotspacemacs-startup-recent-list-size 5
    ;; Default major mode of the scratch buffer (default `text-mode')
-   dotspacemacs-scratch-mode 'text-mode
+   dotspacemacs-scratch-mode 'lisp-interaction-mode
    ;; List of themes, the first of the list is loaded when spacemacs starts.
    ;; Press <SPC> T n to cycle to the next theme in the list (works great
    ;; with 2 themes variants, one dark and one light)
@@ -262,7 +262,7 @@ layers configuration. You are free to put any user code."
   (global-set-key (kbd "C-h") 'backward-delete-char)
   (global-set-key (kbd "C-M-h") 'backward-kill-word)
   (global-set-key (kbd "C-j") 'newline-and-indent)
-  (global-set-key (kbd "C-z") nil)
+  (global-set-key (kbd "C-z") 'shell-pop-ansi-term)
   (global-set-key (kbd "H-7") 'winner-undo)
   (global-set-key (kbd "H-8") 'winner-redo)
 
@@ -280,6 +280,26 @@ layers configuration. You are free to put any user code."
   (global-set-key (kbd "C-x R") 'helm-recentf)
   (global-set-key (kbd "H-/") 'helm-ag)
   (global-set-key (kbd "s-s") 'helm-swoop)
+  (spacemacs/set-leader-keys "C-'" 'avy-goto-word-1)
+
+  (global-set-key (kbd "C-:") nil)
+  (global-set-key (kbd "C-\"") nil)
+  (global-set-key (kbd "C-\"") nil)
+
+  (global-set-key (kbd "C-S-f") 'helm-multi-files)
+  (global-set-key (kbd "C-S-y") nil)
+  (global-set-key (kbd "C-S-h") nil)
+  (global-set-key (kbd "C-S-n") nil)
+  (global-set-key (kbd "C-S-u") nil)
+  (global-set-key (kbd "C-S-j") nil)
+  (global-set-key (kbd "C-S-m") nil)
+  (global-set-key (kbd "C-S-i") nil)
+  (global-set-key (kbd "C-S-k") nil)
+  (global-set-key (kbd "C-S-o") nil)
+  (global-set-key (kbd "C-S-p") 'prodigy)
+
+  (global-set-key (kbd "s-p") 'prodigy)
+  (global-set-key (kbd "s-f") 'helm-multi-files)
 
   (find-function-setup-keys)
   (avy-setup-default)
@@ -287,7 +307,7 @@ layers configuration. You are free to put any user code."
   (setq-default js2-basic-offset 2)
   (setq-default js-indent-level 2)
   (setq-default css-indent-offset 2)
-  
+
   (require 'visual-regexp)
   (require 'vimish-fold)
   (vimish-fold-global-mode 1)

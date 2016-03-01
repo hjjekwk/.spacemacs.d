@@ -1,5 +1,5 @@
 (defconst my-keybindings-packages
-  '(hydra multiple-cursors))
+  '(hydra multiple-cursors key-chord))
 
 (defun my-keybindings/init-multiple-cursors ()
   (use-package multiple-cursors
@@ -10,7 +10,31 @@
            ("H-:" . multiple-cursors-hydra/mc/mark-next-like-this))
     ))
 
-(defun my-hydra/init-hydra ()
+(defun toggle-evil ()
+  (interactive)
+  (let ((evil-mode-on (bound-and-true-p evil-local-mode)))
+    (if (not evil-local-mode)
+        (evil-local-mode 1)
+      (set-cursor-color "SkyBlue2")
+      (evil-local-mode 0))))
+
+(defun my-keybindings/init-key-chord ()
+  (use-package key-chord
+    :config
+    (setq key-chord-two-keys-delay 0.2)
+    (key-chord-mode t)
+    (key-chord-define-global "jk" 'toggle-evil)
+    (key-chord-define-global
+     "ds"
+     (defhydra hydra-zoom ()
+       "zoom"
+       ("j" text-scale-increase "in")
+       ("k" text-scale-decrease "out")
+       ("0" (text-scale-set 0) "reset")
+       ("1" (text-scale-set 0) :bind nil)
+       ("2" (text-scale-set 0) :bind nil :color blue)))))
+
+(defun my-keybindings/init-hydra ()
   (use-package hydra
     :bind (("s-f" . hydra-projectile/body)
            ("C-x t" . hydra-toggle/body)
@@ -66,18 +90,10 @@ _t_ truncate-lines    %`truncate-lines
       ("t" toggle-truncate-lines nil)
       ("q" nil "cancel"))
 
-    (key-chord-define-global
-     "ds"
-     (defhydra hydra-zoom ()
-       "zoom"
-       ("j" text-scale-increase "in")
-       ("k" text-scale-decrease "out")
-       ("0" (text-scale-set 0) "reset")
-       ("1" (text-scale-set 0) :bind nil)
-       ("2" (text-scale-set 0) :bind nil :color blue)))
-
     (defhydra hydra-error (global-map "M-g")
       "goto-error"
+      ("n" next-error "next")
+      ("p" previous-error "previous")
       ("h" flycheck-list-errors "first")
       ("j" flycheck-next-error "next")
       ("k" flycheck-previous-error "prev")
@@ -88,18 +104,18 @@ _t_ truncate-lines    %`truncate-lines
       "
 Move Point^^^^   Move Splitter   ^Ace^                       ^Split^
 --------------------------------------------------------------------------------
-_w_, _<up>_      Shift + Move    _C-a_: ace-window           _2_: split-window-below
-_a_, _<left>_                    _C-s_: ace-window-swap      _3_: split-window-right
-_s_, _<down>_                    _C-d_: ace-window-delete    ^ ^
-_d_, _<right>_                   ^   ^                       ^ ^
+_k_, _<up>_      Shift + Move    _C-a_: ace-window           _2_: split-window-below
+_h_, _<left>_                    _C-s_: ace-window-swap      _3_: split-window-right
+_j_, _<down>_                    _C-d_: ace-window-delete    ^ ^
+_l_, _<right>_                   ^   ^                       ^ ^
 You can use arrow-keys or WASD.
 "
       ("2" split-window-below nil)
       ("3" split-window-right nil)
-      ("a" windmove-left nil)
-      ("s" windmove-down nil)
-      ("w" windmove-up nil)
-      ("d" windmove-right nil)
+      ("h" windmove-left nil)
+      ("j" windmove-down nil)
+      ("k" windmove-up nil)
+      ("l" windmove-right nil)
       ("A" hydra-move-splitter-left nil)
       ("S" hydra-move-splitter-down nil)
       ("W" hydra-move-splitter-up nil)
@@ -210,4 +226,34 @@ _h_tml    ^ ^         ^ ^             _A_SCII:
     ("M-p" mc/unmark-previous-like-this)
     ("r" mc/mark-all-in-region-regexp :exit t)
     ("q" nil))
+
+
+  (defun hydra-vi/pre ()
+    (set-cursor-color "#e52b50"))
+
+  (defun hydra-vi/post ()
+    (set-cursor-color "#ffffff"))
+
+  (global-set-key
+   (kbd "C-z")
+   (defhydra hydra-vi (:pre hydra-vi/pre :post hydra-vi/post :color amaranth)
+     "vi"
+     ("l" forward-char)
+     ("h" backward-char)
+     ("j" next-line)
+     ("k" previous-line)
+     ("w" forward-word)
+     ("b" backward-word)
+
+     ("f" scroll-up-command)
+     ("<SPC>" scroll-up-command)
+     ("<DEL>" scroll-down-command)
+     
+     ("m" set-mark-command "mark")
+     ("a" move-beginning-of-line "beg")
+     ("e" move-end-of-line "end")
+     ("d" delete-region "del" :color blue)
+     ("y" kill-ring-save "yank" :color blue)
+     ("q" nil "quit")))
+  
   )
