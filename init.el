@@ -43,6 +43,7 @@ values."
      my-keybindings
      my-skk
      my-org-reveal
+     my-eww
      )
    ;; List of additional packages that will be installed without being
    ;; wrapped in a layer. If you need some configuration for these
@@ -50,6 +51,7 @@ values."
    ;; configuration in `dotspacemacs/user-config'.
    dotspacemacs-additional-packages
    '(
+     dired-hacks
      visual-regexp
      vimish-fold
      wgrep
@@ -87,7 +89,7 @@ values."
    ;; variable is `emacs' then the `holy-mode' is enabled at startup. `hybrid'
    ;; uses emacs key bindings for vim's insert mode, but otherwise leaves evil
    ;; unchanged. (default 'vim)
-   dotspacemacs-editing-style 'emacs
+   dotspacemacs-editing-style 'vim
    ;; If non nil output loading progress in `*Messages*' buffer. (default nil)
    dotspacemacs-verbose-loading nil
    ;; Specify the startup banner. Default value is `official', it displays
@@ -301,16 +303,33 @@ layers configuration. You are free to put any user code."
   (global-set-key (kbd "s-p") 'prodigy)
   (global-set-key (kbd "s-f") 'helm-multi-files)
 
+  (require 'helm-swoop)
+  ;; When doing isearch, hand the word over to helm-swoop
+  (define-key isearch-mode-map (kbd "M-i") 'helm-swoop-from-isearch)
+  ;; From helm-swoop to helm-multi-swoop-all
+  (define-key helm-swoop-map (kbd "M-i") 'helm-multi-swoop-all-from-helm-swoop)
+
+  (define-key company-active-map (kbd "C-h") 'backward-delete-char)
   (find-function-setup-keys)
   (avy-setup-default)
 
+  (delete-selection-mode)
   (setq-default js2-basic-offset 2)
   (setq-default js-indent-level 2)
   (setq-default css-indent-offset 2)
+  (add-hook
+   'scala-mode-hook
+   (lambda ()
+     (setq scala-indent:align-parameters nil)
+     (setq scala-indent:indent-value-expression nil)
+     (setq scala-indent:align-forms nil)
+     (local-set-key (kbd "s-<return>") 'ensime-import-type-at-point)))
 
   (require 'visual-regexp)
   (require 'vimish-fold)
   (vimish-fold-global-mode 1)
+
+  (add-hook 'java-mode-hook (lambda () (ensime-mode)))
 
   (let ((user-prodigy-dir (expand-file-name "~/.prodigy.d")))
     (when (file-exists-p user-prodigy-dir)

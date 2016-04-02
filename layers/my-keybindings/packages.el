@@ -25,7 +25,7 @@
     (key-chord-mode t)
     (key-chord-define-global "jk" 'toggle-evil)
     (key-chord-define-global
-     "ds"
+     "hj"
      (defhydra hydra-zoom ()
        "zoom"
        ("j" text-scale-increase "in")
